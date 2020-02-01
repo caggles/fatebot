@@ -29,7 +29,7 @@ module.exports = class GrantPrivCommand extends Command {
 
         let priv_promise = privCheck(message, 'admin')
         priv_promise.then(function() {
-            message.reply("sorry, this command doesn't do anything yet.")
+            message.reply("sorry, this command doesn't do anything yet. Ask caggles to do it for you.")
         });
 
     }

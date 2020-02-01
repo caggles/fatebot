@@ -13,10 +13,8 @@ const client = new Commando.Client({
 client.registry
     .registerDefaultTypes()
     .registerGroups([
-        ['dice', 'Dice Commands'],
-        ['character', 'Character Commands'],
-        ['info', 'CoD Information'],
-        ['archive', 'Old Archived Commands (not guaranteed to work)']
+        ['admin', 'Admin Commands'],
+        ['dice', 'Dice Commands']
     ])
     .registerDefaultGroups()
     .registerDefaultCommands({
@@ -34,5 +32,6 @@ client.once('ready', () => {
 	console.log(`Logged in as ${client.user.tag}! (${client.user.id})`);
 	client.user.setActivity('!help');
 });
+
 
 client.login(process.env.BOT_TOKEN);
