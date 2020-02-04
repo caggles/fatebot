@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "bot to serve a DF fate game",
   "main": "index.js",
+  "engines": {
+    "node": "12.13.0"
+  },
   "dependencies": {
     "discord.js": "^11.5.1",
     "discord.js-commando": "^0.10.0",
