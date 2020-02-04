@@ -26,7 +26,7 @@ module.exports = function printCharacter(message, userid, nickname, scope) {
                     userid = userid.replace('<','').replace('>','').replace('@', '').replace('!','')
 
                     //query for the character by shadow name and user (this is unique)
-                    let query = {'nickname': nickname.toLowerCase(), 'userid': userid}
+                    let query = {'nickname': nickname.toLowerCase(), 'userid': userid, 'guildid': message.guild.id}
                     let get_promise = collection.findOne(query)
                     get_promise.then(function (character) {
 
