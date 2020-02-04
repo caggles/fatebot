@@ -1,7 +1,7 @@
-const MongoClient = require('mongodb').MongoClient
-const capitalize = require('./capitalize')
-const checkPriv = require('./priv-check')
-require('dotenv').config()
+const MongoClient = require('mongodb').MongoClient;
+const capitalize = require('./capitalize');
+const checkPriv = require('./priv-check');
+require('dotenv').config();
 
 
 module.exports = function printCharacter(message, userid, nickname, scope) {
@@ -9,50 +9,69 @@ module.exports = function printCharacter(message, userid, nickname, scope) {
         try {
 
             //check for the ability to print the character
-            let priv = 'allchar_view'
+            let priv = 'allchar_view';
             if (userid == message.author.id) {
                 priv = 'mychar_view'
             }
 
-            let priv_promise = checkPriv(message, priv)
+            let priv_promise = checkPriv(message, priv);
             priv_promise.then(function () {
 
                 //connect to the "characters" collection
-                const uri = process.env.MONGO_URI
+                const uri = process.env.MONGO_URI;
                 const client = new MongoClient(uri, {useNewUrlParser: true});
                 client.connect(err => {
                     const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
-                    userid = userid.replace('<','').replace('>','').replace('@', '').replace('!','')
+                    userid = userid.replace('<','').replace('>','').replace('@', '').replace('!','');
 
                     //query for the character by nickname and user (this is unique)
-                    let query = {'nickname': nickname.toLowerCase(), 'userid': userid, 'guildid': message.guild.id}
-                    let get_promise = collection.findOne(query)
+                    let query = {'nickname': nickname.toLowerCase(), 'userid': userid, 'guildid': message.guild.id};
+                    let get_promise = collection.findOne(query);
                     get_promise.then(function (character) {
 
                         if (character == null) {
-                            message.reply("that character doesn't exist.")
+                            message.reply("that character doesn't exist.");
                             reject(err)
                         } else {
 
-                            let sheet = "**" + character.character_name + "**\n" +
-                                "Mantle: " + character.mantle + "\n" +
-                                "High Concept: " + character.high_concept + "\n" +
-                                "Trouble Aspect: " + character.trouble_aspect + "\n" +
-                                "Aspects: " + "\n"
-                            for (let aspect in character.aspects) {
-                                sheet += aspect + "\n"
-                            }
-                            sheet += "\n**Approaches**\n" +
-                                character.approaches.flair + "\n" +
-                                character.approaches.focus + "\n" +
-                                character.approaches.force + "\n" +
-                                character.approaches.guile + "\n" +
-                                character.approaches.haste + "\n" +
-                                character.approaches.intellect + "\n" +
-                                "\nRefresh: " + character.refresh + "\n"
-
+                            let sheet = " ឵឵\n**" + character.character_name.capitalize() + "**";
                             message.say(sheet)
+
+                            if (scope == "base" || scope == "all") {
+                                sheet = " ឵឵\nMantle: " + character.mantle.capitalize() + "\n" +
+                                "Refresh: " + character.refresh + "\n";
+                                message.say(sheet)
+                            }
+
+                            if (scope == "aspects" || scope == "all") {
+                                sheet = " ឵឵\n**Aspects**:\n" +
+                                    "[" + character.high_concept.capitalize() + "] (HC)\n" +
+                                    "[" + character.trouble_aspect.capitalize() + "] (T)\n";
+                                for (let aspect in character.aspects) {
+                                    sheet += "[" + character.aspects[aspect].capitalize() + "]\n"
+                                }
+                                message.say(sheet)
+                            }
+
+                            if (scope == "approaches" || scope == "all") {
+                                sheet = " ឵឵\n**Approaches**\n" +
+                                    character.approaches.flair + "  -  Flair\n" +
+                                    character.approaches.focus + "  -  Focus\n" +
+                                    character.approaches.force + "  -  Force\n" +
+                                    character.approaches.guile + "  -  Guile\n" +
+                                    character.approaches.haste + "  -  Haste\n" +
+                                    character.approaches.intellect + "  -  Intellect\n";
+                                message.say(sheet)
+                            }
+
+                            if (scope == "stunts" || scope == "all") {
+                                sheet = " ឵឵\n**Stunts**\n"
+                                for (let stunt in character.stunts) {
+                                    sheet += character.stunts[stunt].capitalize() + "\n"
+                                }
+                                message.say(sheet)
+                            }
 
                             resolve(null);
                         }
