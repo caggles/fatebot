@@ -1,11 +1,16 @@
 {
   "name": "fatebot",
   "version": "1.0.0",
-  "description": "bot to serve a DF fate game",
+  "description": "",
   "main": "index.js",
-  "engines": {
-    "node": "12.13.0"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "discord.js": "^11.5.1",
     "discord.js-commando": "^0.10.0",
@@ -17,20 +22,5 @@
   },
   "devDependencies": {
     "nodemon": "^1.19.4"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/caggles/fatebot.git"
-  },
-  "author": "caggles",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/caggles/fatebot/issues"
-  },
-  "homepage": "https://github.com/caggles/fatebot#readme"
+  }
 }
