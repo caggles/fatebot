@@ -14,7 +14,8 @@ client.registry
     .registerDefaultTypes()
     .registerGroups([
         ['admin', 'Admin Commands'],
-        ['dice', 'Dice Commands']
+        ['dice', 'Dice Commands'],
+        ['character', 'Character Commands']
     ])
     .registerDefaultGroups()
     .registerDefaultCommands({

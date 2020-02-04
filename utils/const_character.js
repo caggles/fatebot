@@ -1,0 +1,1 @@
+module.exports.approaches = ['flair', 'focus', 'force', 'guile', 'haste', 'intellect']
