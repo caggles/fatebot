@@ -6,14 +6,14 @@ require('../../functions/capitalize')
 const stats = require('../../utils/const_character');
 require('dotenv').config()
 
-module.exports = class AddAspectCommand extends Command {
+module.exports = class RemoveStuntCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'add-aspect',
+            name: 'remove-stunt',
             group: 'character',
-            memberName: 'add-aspect',
-            description: 'add a new aspect to a character',
-            examples: ['`!add-aspect`'],
+            memberName: 'remove-stunt',
+            description: 'remove a stunt from your character',
+            examples: ['`!remove-stunt`'],
             args: [
                 {
                     key: 'nickname',
@@ -21,31 +21,25 @@ module.exports = class AddAspectCommand extends Command {
                     type: 'string'
                 },
                 {
-                    key: 'aspect',
-                    prompt: 'What is the name of the aspect?',
+                    key: 'stunt',
+                    prompt: 'What is the name of the stunt? You will need to enter the correct stunt name exactly as it appears on your character sheet.',
                     type: 'string'
                 },
                 {
-                    key: 'type',
-                    prompt: 'What type of aspect are you updating?\nOptions: high, trouble, other',
-                    type: 'string',
-                    oneOf: ['high concept', 'high', 'hc', 'trouble', 't', 'other']
+                    key: 'refresh',
+                    prompt: 'Enter the number of refresh you\'re regaining from the removal of this stunt. The only valid choices are 0 or 1.',
+                    type: "integer",
+                    oneOf: [0, 1]
                 }
             ]
         });
     }
 
-    async run(message, {nickname, aspect, type}) {
+    async run(message, {nickname, stunt, refresh}) {
         try {
 
             nickname = nickname.toString().toLowerCase().trim()
-            aspect = aspect.toString().toLowerCase().trim()
-
-            if (type == 'high concept' || type == 'high' || type == 'hc') {
-                type = 'high_concept'
-            } else if (type == 'trouble' || type == 't') {
-                type = 'trouble_aspect'
-            }
+            stunt = stunt.toString().toLowerCase().trim()
 
 
             //connect to the "character" collection
@@ -55,25 +49,15 @@ module.exports = class AddAspectCommand extends Command {
                 const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
-                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id}
-                let update = ''
-
-                if (type == 'other') {
-                    update = { $addToSet: { 'aspects': aspect } }
-                } else if (type == 'high_concept') {
-                    update = { $set: {'high_concept': aspect} }
-                } else if (type == 'trouble_aspect') {
-                    update = { $set: {'trouble_aspect': aspect} }
-                } else {
-                    throw 'That isn\'t a valid aspect type';
-                }
+                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
+                let update = { $pull: { 'stunts': stunt }, $inc: {'refresh': refresh} };
 
                 //update the document with the new stunt
                 let update_promise = collection.findOneAndUpdate(query, update);
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'aspects')
+                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stunts')
 
                 })
                 .catch(function (err) {

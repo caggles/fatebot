@@ -89,6 +89,19 @@ module.exports = class CharacterCreateCommand extends Command {
     run(message, {character_name, nickname, mantle, high_concept, trouble_aspect, aspect, approach3, approach2a, approach2b, approach1a, approach1b, approach0}) {
         try {
 
+            character_name = character_name.toString().toLowerCase().trim();
+            nickname = nickname.toString().toLowerCase().trim();
+            mantle = mantle.toString().toLowerCase().trim();
+            high_concept = high_concept.toString().toLowerCase().trim();
+            trouble_aspect = trouble_aspect.toString().toLowerCase().trim();
+            aspect = aspect.toString().toLowerCase().trim();
+            approach3 = approach3.toString().toLowerCase().trim();
+            approach2a = approach2a.toString().toLowerCase().trim();
+            approach2b = approach2b.toString().toLowerCase().trim();
+            approach1a = approach1a.toString().toLowerCase().trim();
+            approach1b = approach1b.toString().toLowerCase().trim();
+            approach0 = approach0.toString().toLowerCase().trim();
+
             //connect to the "character" collection
             const uri = process.env.MONGO_URI;
             const client = new MongoClient(uri, {useNewUrlParser: true});
@@ -115,6 +128,7 @@ module.exports = class CharacterCreateCommand extends Command {
                             'intellect': 0
                         },
                         refresh: 3,
+                        fate_points: 3,
                         stunts: [],
                         stress: {
                             base: {

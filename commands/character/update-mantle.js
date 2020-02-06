@@ -6,14 +6,14 @@ require('../../functions/capitalize')
 const stats = require('../../utils/const_character');
 require('dotenv').config()
 
-module.exports = class AddAspectCommand extends Command {
+module.exports = class UpdateMantleCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'add-aspect',
+            name: 'update-mantle',
             group: 'character',
-            memberName: 'add-aspect',
-            description: 'add a new aspect to a character',
-            examples: ['`!add-aspect`'],
+            memberName: 'update-mantle',
+            description: 'change your character\'s mantle',
+            examples: ['`!update-mantle`'],
             args: [
                 {
                     key: 'nickname',
@@ -21,31 +21,19 @@ module.exports = class AddAspectCommand extends Command {
                     type: 'string'
                 },
                 {
-                    key: 'aspect',
-                    prompt: 'What is the name of the aspect?',
+                    key: 'mantle',
+                    prompt: 'What is your new mantle called? Note that this does not permit you to add a new mantle if you\'re adding as second one. Enter the entire mantle name at once.',
                     type: 'string'
-                },
-                {
-                    key: 'type',
-                    prompt: 'What type of aspect are you updating?\nOptions: high, trouble, other',
-                    type: 'string',
-                    oneOf: ['high concept', 'high', 'hc', 'trouble', 't', 'other']
                 }
             ]
         });
     }
 
-    async run(message, {nickname, aspect, type}) {
+    async run(message, {nickname, mantle}) {
         try {
 
             nickname = nickname.toString().toLowerCase().trim()
-            aspect = aspect.toString().toLowerCase().trim()
-
-            if (type == 'high concept' || type == 'high' || type == 'hc') {
-                type = 'high_concept'
-            } else if (type == 'trouble' || type == 't') {
-                type = 'trouble_aspect'
-            }
+            mantle = mantle.toString().toLowerCase().trim()
 
 
             //connect to the "character" collection
@@ -56,24 +44,14 @@ module.exports = class AddAspectCommand extends Command {
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id}
-                let update = ''
-
-                if (type == 'other') {
-                    update = { $addToSet: { 'aspects': aspect } }
-                } else if (type == 'high_concept') {
-                    update = { $set: {'high_concept': aspect} }
-                } else if (type == 'trouble_aspect') {
-                    update = { $set: {'trouble_aspect': aspect} }
-                } else {
-                    throw 'That isn\'t a valid aspect type';
-                }
+                let update = { $set: {'mantle': mantle} }
 
                 //update the document with the new stunt
                 let update_promise = collection.findOneAndUpdate(query, update);
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'aspects')
+                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'base')
 
                 })
                 .catch(function (err) {

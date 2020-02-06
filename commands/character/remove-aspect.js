@@ -6,14 +6,14 @@ require('../../functions/capitalize')
 const stats = require('../../utils/const_character');
 require('dotenv').config()
 
-module.exports = class AddAspectCommand extends Command {
+module.exports = class RemoveAspectCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'add-aspect',
+            name: 'remove-aspect',
             group: 'character',
-            memberName: 'add-aspect',
-            description: 'add a new aspect to a character',
-            examples: ['`!add-aspect`'],
+            memberName: 'remove-aspect',
+            description: 'remove an aspect from a character',
+            examples: ['`!remove-aspect`'],
             args: [
                 {
                     key: 'nickname',
@@ -22,30 +22,19 @@ module.exports = class AddAspectCommand extends Command {
                 },
                 {
                     key: 'aspect',
-                    prompt: 'What is the name of the aspect?',
+                    prompt: 'What is the name of the aspect? You will need to enter the correct aspect name exactly as it appears on your character sheet.' +
+                        '\nNote that you can only remove other aspects - you cannot remove a high concept or trouble aspect. If you want to replace your HC or T aspects, use the `!add-aspect` command.',
                     type: 'string'
-                },
-                {
-                    key: 'type',
-                    prompt: 'What type of aspect are you updating?\nOptions: high, trouble, other',
-                    type: 'string',
-                    oneOf: ['high concept', 'high', 'hc', 'trouble', 't', 'other']
                 }
             ]
         });
     }
 
-    async run(message, {nickname, aspect, type}) {
+    async run(message, {nickname, aspect}) {
         try {
 
             nickname = nickname.toString().toLowerCase().trim()
             aspect = aspect.toString().toLowerCase().trim()
-
-            if (type == 'high concept' || type == 'high' || type == 'hc') {
-                type = 'high_concept'
-            } else if (type == 'trouble' || type == 't') {
-                type = 'trouble_aspect'
-            }
 
 
             //connect to the "character" collection
@@ -56,17 +45,7 @@ module.exports = class AddAspectCommand extends Command {
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id}
-                let update = ''
-
-                if (type == 'other') {
-                    update = { $addToSet: { 'aspects': aspect } }
-                } else if (type == 'high_concept') {
-                    update = { $set: {'high_concept': aspect} }
-                } else if (type == 'trouble_aspect') {
-                    update = { $set: {'trouble_aspect': aspect} }
-                } else {
-                    throw 'That isn\'t a valid aspect type';
-                }
+                let update = { $pull: { 'aspects': aspect } }
 
                 //update the document with the new stunt
                 let update_promise = collection.findOneAndUpdate(query, update);

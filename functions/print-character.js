@@ -35,12 +35,13 @@ module.exports = function printCharacter(message, userid, nickname, scope) {
                             reject(err)
                         } else {
 
-                            let sheet = " ឵឵\n**" + character.character_name.capitalize() + "**";
+                            let sheet = "__**" + character.character_name.capitalize() + "**__";
                             message.say(sheet)
 
                             if (scope == "base" || scope == "all") {
                                 sheet = " ឵឵\nMantle: " + character.mantle.capitalize() + "\n" +
-                                "Refresh: " + character.refresh + "\n";
+                                    "Refresh: " + character.refresh + "\n" +
+                                    "Fate Points: " + character.fate_points + "\n";
                                 message.say(sheet)
                             }
 
@@ -70,6 +71,14 @@ module.exports = function printCharacter(message, userid, nickname, scope) {
                                 for (let stunt in character.stunts) {
                                     sheet += character.stunts[stunt].capitalize() + "\n"
                                 }
+                                message.say(sheet)
+                            }
+
+                            if (scope == "conditions" || scope == "stress" || scope == "all") {
+                                sheet = " ឵឵\n**Stress**\n";
+                                    for (let stress in character.stress) {
+                                        sheet += stress + " : " + character.stress[stress].marked + "/" + character.stress[stress].total + '\n';
+                                    }
                                 message.say(sheet)
                             }
 

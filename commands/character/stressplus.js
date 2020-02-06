@@ -6,14 +6,14 @@ require('../../functions/capitalize')
 const stats = require('../../utils/const_character');
 require('dotenv').config()
 
-module.exports = class AddStuntCommand extends Command {
+module.exports = class StressPlusCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'add-stunt',
+            name: 'stress+',
             group: 'character',
-            memberName: 'add-stunt',
-            description: 'add a new stunt to a character',
-            examples: ['`!add-stunt`'],
+            memberName: 'stress+',
+            description: 'add stress to your character',
+            examples: ['`!stress+ nickname type number`'],
             args: [
                 {
                     key: 'nickname',
@@ -21,26 +21,25 @@ module.exports = class AddStuntCommand extends Command {
                     type: 'string'
                 },
                 {
-                    key: 'stunt',
-                    prompt: 'What is the name of the stunt?',
+                    key: 'type',
+                    prompt: 'What type of stress are you marking? (This is probably base unless you\'re doing something specific)',
                     type: 'string'
                 },
                 {
-                    key: 'refresh',
-                    prompt: 'Enter the number of refresh to be spent on this stunt: 0 if a core stunt or made a creation, or else 1 in all other cases.',
-                    type: "integer",
-                    oneOf: [0, 1]
+                    key: 'number',
+                    prompt: 'How many stress are you marking?',
+                    type: 'integer'
                 }
             ]
         });
     }
 
-    async run(message, {nickname, stunt, refresh}) {
+    async run(message, {nickname, type, number}) {
         try {
 
-            nickname = nickname.toString().toLowerCase().trim()
-            stunt = stunt.toString().toLowerCase().trim()
-
+            nickname = nickname.toString().toLowerCase().trim();
+            type = type.toString().toLowerCase().trim();
+            number = parseInt(number);
 
             //connect to the "character" collection
             const uri = process.env.MONGO_URI;
@@ -50,15 +49,22 @@ module.exports = class AddStuntCommand extends Command {
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
-                let quantity = 0 - refresh
-                let update = { $addToSet: { 'stunts': stunt }, $inc: {'refresh': quantity} };
 
                 //update the document with the new stunt
-                let update_promise = collection.findOneAndUpdate(query, update);
+                let update_promise = collection.findOne(query);
                 update_promise.then(function (character) {
 
+                    //finish figuring out how the stress should be passed along.
+                    if (type != "base") {
+                        let type_total = character["value"]["stress"][type]["total"];
+                        if (number > type_total) {
+                            number -= type_total;
+                        }
+                    }
+
+
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stunts')
+                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'base')
 
                 })
                 .catch(function (err) {

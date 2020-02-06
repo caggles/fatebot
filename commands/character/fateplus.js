@@ -6,41 +6,28 @@ require('../../functions/capitalize')
 const stats = require('../../utils/const_character');
 require('dotenv').config()
 
-module.exports = class AddStuntCommand extends Command {
+module.exports = class FatePlusCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'add-stunt',
+            name: 'fate+',
             group: 'character',
-            memberName: 'add-stunt',
-            description: 'add a new stunt to a character',
-            examples: ['`!add-stunt`'],
+            memberName: 'fate+',
+            description: 'add a fate point to your character',
+            examples: ['`!fate+ nickname`'],
             args: [
                 {
                     key: 'nickname',
                     prompt: 'What is your character\'s nickname?',
                     type: 'string'
-                },
-                {
-                    key: 'stunt',
-                    prompt: 'What is the name of the stunt?',
-                    type: 'string'
-                },
-                {
-                    key: 'refresh',
-                    prompt: 'Enter the number of refresh to be spent on this stunt: 0 if a core stunt or made a creation, or else 1 in all other cases.',
-                    type: "integer",
-                    oneOf: [0, 1]
                 }
             ]
         });
     }
 
-    async run(message, {nickname, stunt, refresh}) {
+    async run(message, {nickname}) {
         try {
 
             nickname = nickname.toString().toLowerCase().trim()
-            stunt = stunt.toString().toLowerCase().trim()
-
 
             //connect to the "character" collection
             const uri = process.env.MONGO_URI;
@@ -50,15 +37,18 @@ module.exports = class AddStuntCommand extends Command {
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
-                let quantity = 0 - refresh
-                let update = { $addToSet: { 'stunts': stunt }, $inc: {'refresh': quantity} };
+                let update = { $inc: {'fate_points': 1} };
 
                 //update the document with the new stunt
                 let update_promise = collection.findOneAndUpdate(query, update);
                 update_promise.then(function (character) {
 
+                    if (character["value"] == null) {
+                        throw 'That character does not exist.'
+                    }
+
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stunts')
+                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'base')
 
                 })
                 .catch(function (err) {
