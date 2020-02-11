@@ -58,13 +58,29 @@ module.exports = function printCharacter(message, userid, scope, reason) {
                             }
 
                             if (scope == "approaches" || scope == "all") {
-                                sheet = " ឵឵\n**Approaches**\n" +
-                                    character.approaches.flair + "  -  Flair\n" +
-                                    character.approaches.focus + "  -  Focus\n" +
-                                    character.approaches.force + "  -  Force\n" +
-                                    character.approaches.guile + "  -  Guile\n" +
-                                    character.approaches.haste + "  -  Haste\n" +
-                                    character.approaches.intellect + "  -  Intellect\n";
+                                let approachlist = ['', '', '', '', '', ''];
+                                approachlist[character.approaches.flair] += 'Flair, ';
+                                approachlist[character.approaches.focus] += 'Focus, ';
+                                approachlist[character.approaches.force] += 'Force, ';
+                                approachlist[character.approaches.guile] += 'Guile, ';
+                                approachlist[character.approaches.haste] += 'Haste, ';
+                                approachlist[character.approaches.intellect] += 'Intellect, ';
+
+                                console.log(approachlist)
+
+                                sheet = " ឵឵\n**Approaches**\n"
+
+
+                                let print = false
+                                for (let i = 5; i > 0; i--) {
+                                    if (approachlist[i].length > 0) {
+                                        print = true
+                                    }
+                                    if (print) {
+                                        sheet += i + '  -  ' + approachlist[i].substr(0, approachlist[i].length - 2) + '\n'
+                                    }
+                                }
+
                                 message.say(sheet)
                             }
 
