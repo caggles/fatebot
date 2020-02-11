@@ -57,7 +57,7 @@ module.exports = class StressPlusCommand extends Command {
                     let type_stress = character["stress"][type]["marked"];
                     let base_stress = character["stress"]["base"]["marked"];
 
-                    if (type != "base" && character["stress"][type] != null) {
+                    if (type != "base" && character["stress"][type] != undefined) {
                         let type_left = character["stress"][type]["total"] - character["stress"][type]["marked"];
                         if (type_left > stress) {
                             type_stress += stress;
@@ -75,9 +75,10 @@ module.exports = class StressPlusCommand extends Command {
                     } else {
 
                         base_stress += stress;
+
                         let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
                         let update = { $set: {"stress.base.marked": base_stress }};
-                        if (character["stress"][type] != null) {
+                        if (type != "base" && character["stress"][type] != undefined) {
                             let type_field = "stress." + type + ".marked";
                             update = { $set: {"stress.base.marked": base_stress,  [type_field]: type_stress}}
                         }
