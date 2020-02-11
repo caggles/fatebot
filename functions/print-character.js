@@ -72,7 +72,7 @@ module.exports = function printCharacter(message, userid, scope, reason) {
 
 
                                 let print = false
-                                for (let i = 5; i > 0; i--) {
+                                for (let i = 5; i >= 0; i--) {
                                     if (approachlist[i].length > 0) {
                                         print = true
                                     }
@@ -95,12 +95,33 @@ module.exports = function printCharacter(message, userid, scope, reason) {
                             if (scope == "condition" || scope == "stress" || scope == "all") {
                                 sheet = " ឵឵\n**Stress**\n";
                                 for (let stress in character.stress) {
-                                    sheet += stress + " : " + character.stress[stress].marked + "/" + character.stress[stress].total + '\n';
+                                    sheet += stress.capitalize() + " : "
+                                    for (let i = 0; i < character.stress[stress].total; i++) {
+                                        sheet += '['
+                                        if (i < character.stress[stress].marked) {
+                                            sheet += 'X'
+                                        } else {
+                                            sheet += '  '
+                                        }
+                                        sheet += ']'
+                                    }
+                                    sheet += '\n'
                                 }
+                                //sheet += stress + " : " + character.stress[stress].marked + "/" + character.stress[stress].total + '\n';
+
                                 sheet += " ឵឵\n**Conditions**\n";
                                 for (let condition in character.conditions) {
-                                    sheet += condition.capitalize() + " : " + character.conditions[condition].marked + "/" + character.conditions[condition].total +
-                                        ' (' + character.conditions[condition].type + ')\n';
+                                    sheet += condition.capitalize() + " : "
+                                    for (let i = 0; i < character.conditions[condition].total; i++){
+                                        sheet += '['
+                                        if (i < character.conditions[condition].marked) {
+                                            sheet += 'X'
+                                        } else {
+                                            sheet += '  '
+                                        }
+                                        sheet += ']'
+                                    }
+                                    sheet += '\n'
                                 }
                                 message.say(sheet)
                             }
