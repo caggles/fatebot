@@ -40,6 +40,7 @@ module.exports = function printCharacter(message, userid, nickname, scope) {
 
                             if (scope == "base" || scope == "all") {
                                 sheet = " ឵឵\nMantle: " + character.mantle.capitalize() + "\n" +
+                                    "Scope: " + character.scope.capitalize() + "\n" +
                                     "Refresh: " + character.refresh + "\n" +
                                     "Fate Points: " + character.fate_points + "\n";
                                 message.say(sheet)
