@@ -1,6 +1,7 @@
 const MongoClient = require('mongodb').MongoClient;
 const capitalize = require('./capitalize');
 const checkPriv = require('./priv-check');
+const lodash = require("lodash");
 require('dotenv').config();
 
 
@@ -82,13 +83,16 @@ module.exports = function printCharacter(message, userid, scope, reason) {
                                 }
                                 sheet += " ឵឵\n**Conditions**\n";
                                 for (let condition in character.conditions) {
-                                    sheet += condition + " : " + character.conditions[condition].marked + "/" + character.conditions[condition].total + '\n';
+                                    sheet += condition.capitalize() + " : " + character.conditions[condition].marked + "/" + character.conditions[condition].total +
+                                        ' (' + character.conditions[condition].type + ')\n';
                                 }
                                 message.say(sheet)
                             }
 
                             if (reason == 'edit') {
-                                message.say('@GM, ' + character.character_name.capitalize() + ' has been edited. Please review.')
+                                let gmrole = message.guild.roles.find(role => role.name === "GM");
+                                console.log(gmrole)
+                                message.say( '<@&' + gmrole.id + '>, ' + character.character_name.capitalize() + ' has been edited. Please review.')
                             }
 
                             resolve(null);

@@ -13,11 +13,23 @@ module.exports = class FatePlusCommand extends Command {
             group: 'character',
             memberName: 'fate+',
             description: 'add a fate point to your character',
-            examples: ['`!fate+`']
+            examples: ['`!fate+`'],
+            args: [
+                {
+                    key: 'type',
+                    prompt: 'What type of condition are you marking?',
+                    type: 'string'
+                },
+                {
+                    key: 'boxes',
+                    prompt: 'How many boxes are you marking?',
+                    type: 'integer'
+                }
+            ]
         });
     }
 
-    async run(message) {
+    async run(message, {type, boxes}) {
         try {
 
             //connect to the "character" collection
@@ -28,7 +40,7 @@ module.exports = class FatePlusCommand extends Command {
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {userid: message.author.id, guildid: message.guild.id};
-                let update = { $inc: {'fate_points': 1} };
+                let update = { $set: {'fate_points': 1} };
 
                 //update the document with the new stunt
                 let update_promise = collection.findOneAndUpdate(query, update);

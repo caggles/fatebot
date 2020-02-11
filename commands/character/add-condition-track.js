@@ -24,16 +24,23 @@ module.exports = class AddConditionTrackCommand extends Command {
                     key: 'noofboxes',
                     prompt: 'How many boxes will the condition track have?',
                     type: 'integer'
+                },
+                {
+                    key: 'type',
+                    prompt: 'What type is it?\nOptions: fleeting, sticky, lasting',
+                    type: 'string',
+                    oneOf: ['fleeting', 'sticky', 'lasting']
                 }
             ]
         });
     }
 
-    async run(message, {trackname, noofboxes}) {
+    async run(message, {trackname, noofboxes, type}) {
         try {
 
             trackname = trackname.toString().toLowerCase().trim()
             noofboxes = parseInt(noofboxes)
+            type = type.toString().toLowerCase().trim()
 
             //connect to the "character" collection
             const uri = process.env.MONGO_URI;
@@ -44,7 +51,7 @@ module.exports = class AddConditionTrackCommand extends Command {
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {userid: message.author.id, guildid: message.guild.id};
                 let field = 'conditions.' + trackname;
-                let value = { marked: 0, total: noofboxes }
+                let value = { marked: 0, total: noofboxes, type: type }
                 let update = { $set: { [field] : value} };
 
                 //update the document with the new stunt
