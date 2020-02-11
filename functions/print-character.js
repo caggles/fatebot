@@ -36,7 +36,7 @@ module.exports = function printCharacter(message, userid, scope, reason) {
                             reject(err)
                         } else {
 
-                            let sheet = "__**" + character.character_name.capitalize() + "**__\n" + character.nickname.capitalize();
+                            let sheet = "__**" + character.character_name.capitalize() + "**__ (" + character.nickname.capitalize() + ")";
                             message.say(sheet)
 
                             if (scope == "base" || scope == "all") {
