@@ -47,6 +47,11 @@ module.exports = class CharacterCreateCommand extends Command {
                     type: 'string'
                 },
                 {
+                    key: 'scale',
+                    prompt: 'On what scale does your character operate? If you need more than one, list both here.',
+                    type: 'string'
+                },
+                {
                     key: 'approach3',
                     prompt: 'What approach will you take at +3?\nOptions: flair, focus, force, guile, haste, intellect',
                     type: 'string',
@@ -86,7 +91,7 @@ module.exports = class CharacterCreateCommand extends Command {
         });
     }
 
-    run(message, {character_name, nickname, mantle, high_concept, trouble_aspect, aspect, approach3, approach2a, approach2b, approach1a, approach1b, approach0}) {
+    run(message, {character_name, nickname, mantle, high_concept, trouble_aspect, aspect, scale, approach3, approach2a, approach2b, approach1a, approach1b, approach0}) {
         try {
 
             character_name = character_name.toString().toLowerCase().trim();
@@ -95,6 +100,7 @@ module.exports = class CharacterCreateCommand extends Command {
             high_concept = high_concept.toString().toLowerCase().trim();
             trouble_aspect = trouble_aspect.toString().toLowerCase().trim();
             aspect = aspect.toString().toLowerCase().trim();
+            scale = scale.toString().toLowerCase().trim();
             approach3 = approach3.toString().toLowerCase().trim();
             approach2a = approach2a.toString().toLowerCase().trim();
             approach2b = approach2b.toString().toLowerCase().trim();
@@ -113,12 +119,12 @@ module.exports = class CharacterCreateCommand extends Command {
                     {   'user': message.author.username,
                         'userid': message.author.id,
                         'guildid': message.guild.id,
-                        'character_name': character_name.toLowerCase(),
-                        'nickname': nickname.toLowerCase(),
-                        'mantle': mantle.toLowerCase(),
-                        'high_concept': high_concept.toLowerCase(),
-                        'trouble_aspect': trouble_aspect.toLowerCase(),
-                        'aspects': [aspect.toLowerCase()],
+                        'character_name': character_name,
+                        'nickname': nickname,
+                        'mantle': mantle,
+                        'high_concept': high_concept,
+                        'trouble_aspect': trouble_aspect,
+                        'aspects': [aspect],
                         approaches: {
                             'flair': 0,
                             'focus': 0,
@@ -129,6 +135,7 @@ module.exports = class CharacterCreateCommand extends Command {
                         },
                         refresh: 3,
                         fate_points: 3,
+                        scale: scale,
                         stunts: [],
                         stress: {
                             base: {
