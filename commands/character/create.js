@@ -144,7 +144,7 @@ module.exports = class CharacterCreateCommand extends Command {
                             }
                         },
                         conditions: {
-                            in_peril: {
+                            'in peril': {
                                 marked: 0,
                                 total: 1,
                                 type: 'sticky'

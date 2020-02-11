@@ -70,6 +70,7 @@ module.exports = class StressPlusCommand extends Command {
                     let base_left = character["stress"]["base"]["total"] - character["stress"]["base"]["marked"];
 
                     if (stress > base_left) {
+                        let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stress')
                         throw "You don't have enough stress boxes left to take this damage. Mitigate some with a condition and try again."
                     } else {
 

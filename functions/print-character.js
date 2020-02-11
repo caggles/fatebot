@@ -40,7 +40,7 @@ module.exports = function printCharacter(message, userid, nickname, scope) {
 
                             if (scope == "base" || scope == "all") {
                                 sheet = " ឵឵\nMantle: " + character.mantle.capitalize() + "\n" +
-                                    "Scope: " + character.scope.capitalize() + "\n" +
+                                    "Scale: " + character.scale.capitalize() + "\n" +
                                     "Refresh: " + character.refresh + "\n" +
                                     "Fate Points: " + character.fate_points + "\n";
                                 message.say(sheet)
@@ -75,11 +75,15 @@ module.exports = function printCharacter(message, userid, nickname, scope) {
                                 message.say(sheet)
                             }
 
-                            if (scope == "conditions" || scope == "stress" || scope == "all") {
+                            if (scope == "condition" || scope == "stress" || scope == "all") {
                                 sheet = " ឵឵\n**Stress**\n";
-                                    for (let stress in character.stress) {
-                                        sheet += stress + " : " + character.stress[stress].marked + "/" + character.stress[stress].total + '\n';
-                                    }
+                                for (let stress in character.stress) {
+                                    sheet += stress + " : " + character.stress[stress].marked + "/" + character.stress[stress].total + '\n';
+                                }
+                                sheet += " ឵឵\n**Conditions**\n";
+                                for (let condition in character.conditions) {
+                                    sheet += condition + " : " + character.conditions[condition].marked + "/" + character.conditions[condition].total + '\n';
+                                }
                                 message.say(sheet)
                             }
 
