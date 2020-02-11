@@ -26,7 +26,7 @@ module.exports = class StressPlusCommand extends Command {
                     type: 'string'
                 },
                 {
-                    key: 'number',
+                    key: 'stress',
                     prompt: 'How many stress are you marking?',
                     type: 'integer'
                 }
@@ -34,12 +34,12 @@ module.exports = class StressPlusCommand extends Command {
         });
     }
 
-    async run(message, {nickname, type, number}) {
+    async run(message, {nickname, type, stress}) {
         try {
 
             nickname = nickname.toString().toLowerCase().trim();
             type = type.toString().toLowerCase().trim();
-            number = parseInt(number);
+            stress = parseInt(stress);
 
             //connect to the "character" collection
             const uri = process.env.MONGO_URI;
@@ -51,20 +51,44 @@ module.exports = class StressPlusCommand extends Command {
                 let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
 
                 //update the document with the new stunt
-                let update_promise = collection.findOne(query);
-                update_promise.then(function (character) {
+                let find_promise = collection.findOne(query);
+                find_promise.then(function (character) {
 
-                    //finish figuring out how the stress should be passed along.
-                    if (type != "base") {
-                        let type_total = character["value"]["stress"][type]["total"];
-                        if (number > type_total) {
-                            number -= type_total;
+                    let type_stress = character["stress"][type]["marked"];
+                    let base_stress = character["stress"]["base"]["marked"];
+
+                    if (type != "base" && character["stress"][type] != null) {
+                        let type_left = character["stress"][type]["total"] - character["stress"][type]["marked"];
+                        if (type_left > stress) {
+                            type_stress += stress;
+                        } else {
+                            type_stress += type_left;
+                            stress -= type_left;
                         }
                     }
 
+                    let base_left = character["stress"]["base"]["total"] - character["stress"]["base"]["marked"];
 
-                    //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'base')
+                    if (stress > base_left) {
+                        throw "You don't have enough stress boxes left to take this damage. Mitigate some with a condition and try again."
+                    } else {
+
+                        base_stress += stress;
+                        let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
+                        let update = { $set: {"stress.base.marked": base_stress }};
+                        if (character["stress"][type] != null) {
+                            let type_field = "stress." + type + ".marked";
+                            update = { $set: {"stress.base.marked": base_stress,  [type_field]: type_stress}}
+                        }
+
+                        let update_promise = collection.findOneAndUpdate(query, update);
+                        update_promise.then(function (character) {
+
+                            let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stress')
+
+                        });
+
+                    }
 
                 })
                 .catch(function (err) {
