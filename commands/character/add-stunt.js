@@ -16,11 +16,6 @@ module.exports = class AddStuntCommand extends Command {
             examples: ['`!add-stunt`'],
             args: [
                 {
-                    key: 'nickname',
-                    prompt: 'What is your character\'s nickname?',
-                    type: 'string'
-                },
-                {
                     key: 'stunt',
                     prompt: 'What is the name of the stunt?',
                     type: 'string'
@@ -35,12 +30,10 @@ module.exports = class AddStuntCommand extends Command {
         });
     }
 
-    async run(message, {nickname, stunt, refresh}) {
+    async run(message, {stunt, refresh}) {
         try {
 
-            nickname = nickname.toString().toLowerCase().trim()
             stunt = stunt.toString().toLowerCase().trim()
-
 
             //connect to the "character" collection
             const uri = process.env.MONGO_URI;
@@ -49,7 +42,7 @@ module.exports = class AddStuntCommand extends Command {
                 const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
-                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
+                let query = {userid: message.author.id, guildid: message.guild.id};
                 let quantity = 0 - refresh
                 let update = { $addToSet: { 'stunts': stunt }, $inc: {'refresh': quantity} };
 
@@ -58,7 +51,7 @@ module.exports = class AddStuntCommand extends Command {
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stunts')
+                    let print_promise = printCharacter(message, message.author.id, 'stunts', 'edit')
 
                 })
                 .catch(function (err) {

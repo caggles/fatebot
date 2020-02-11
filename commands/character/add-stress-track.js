@@ -13,13 +13,8 @@ module.exports = class AddStressTrackCommand extends Command {
             group: 'character',
             memberName: 'add-stress-track',
             description: 'add a new stress track to a character',
-            examples: ['`!add-stress-track nickname track-name no-of-boxes`'],
+            examples: ['`!add-stress-track track-name no-of-boxes`'],
             args: [
-                {
-                    key: 'nickname',
-                    prompt: 'What is your character\'s nickname?',
-                    type: 'string'
-                },
                 {
                     key: 'trackname',
                     prompt: 'What is the name of the stress track?',
@@ -34,10 +29,9 @@ module.exports = class AddStressTrackCommand extends Command {
         });
     }
 
-    async run(message, {nickname, trackname, noofboxes}) {
+    async run(message, {trackname, noofboxes}) {
         try {
 
-            nickname = nickname.toString().toLowerCase().trim()
             trackname = trackname.toString().toLowerCase().trim()
             noofboxes = parseInt(noofboxes)
 
@@ -48,7 +42,7 @@ module.exports = class AddStressTrackCommand extends Command {
                 const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
-                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
+                let query = {userid: message.author.id, guildid: message.guild.id};
                 let field = 'stress.' + trackname;
                 let value = { marked: 0, total: noofboxes }
                 let update = { $set: { [field] : value} };
@@ -58,7 +52,7 @@ module.exports = class AddStressTrackCommand extends Command {
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stress')
+                    let print_promise = printCharacter(message, message.author.id, 'stress', 'edit')
 
                 })
                 .catch(function (err) {

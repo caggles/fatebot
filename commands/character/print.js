@@ -8,8 +8,8 @@ module.exports = class PrintCommand extends Command {
             group: 'character',
             memberName: 'print',
             description: 'print character',
-            examples: [ '`!print nickname` to print your own character',
-                        '`!print tag nickname` to print another user\'s character, available only to staff'],
+            examples: [ '`!print` to print your own character',
+                        '`!print tag` to print another user\'s character, available only to staff'],
         });
     }
 
@@ -21,18 +21,13 @@ module.exports = class PrintCommand extends Command {
         try {
 
             if (msglist.length == 1) {
-                throw "Not enough arguments!"
-            } else if (msglist.length == 2) {
-                nickname = msglist[1]
                 userid = message.author.id
-            } else if (msglist.length == 3) {
-                nickname = msglist[2]
+            } else if (msglist.length == 2) {
                 userid = msglist[1]
                 userid = userid.replace('<','').replace('>','').replace('@', '').replace('!','')
             }
 
-            nickname = nickname.toString().toLowerCase().trim();
-            printCharacter(message, userid, nickname, 'all');
+            printCharacter(message, userid, 'all', 'view');
 
         } catch (err) {
             message.reply(err.message)

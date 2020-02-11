@@ -13,21 +13,12 @@ module.exports = class FateMinusCommand extends Command {
             group: 'character',
             memberName: 'fate-',
             description: 'spend a fate point',
-            examples: ['`!fate- nickname`'],
-            args: [
-                {
-                    key: 'nickname',
-                    prompt: 'What is your character\'s nickname?',
-                    type: 'string'
-                }
-            ]
+            examples: ['`!fate-`']
         });
     }
 
-    async run(message, {nickname}) {
+    async run(message) {
         try {
-
-            nickname = nickname.toString().toLowerCase().trim()
 
             //connect to the "character" collection
             const uri = process.env.MONGO_URI;
@@ -36,7 +27,7 @@ module.exports = class FateMinusCommand extends Command {
                 const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
-                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
+                let query = {userid: message.author.id, guildid: message.guild.id};
                 let update = { $inc: {'fate_points': -1} };
 
                 //update the document with the new stunt
@@ -48,7 +39,7 @@ module.exports = class FateMinusCommand extends Command {
                     }
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'base')
+                    let print_promise = printCharacter(message, message.author.id,'base', 'view')
 
                 })
                 .catch(function (err) {

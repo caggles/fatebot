@@ -134,7 +134,7 @@ module.exports = class CharacterCreateCommand extends Command {
                             'intellect': 0
                         },
                         refresh: 3,
-                        fate_points: 3,
+                        fate_points: 0,
                         scale: scale,
                         stunts: [],
                         stress: {
@@ -176,12 +176,12 @@ module.exports = class CharacterCreateCommand extends Command {
                 create_promise.then(function (character) {
 
                     //print the resulting character sheet
-                    let print_promise = printCharacter(message, message.author.id, character["ops"][0]["nickname"], 'all');
+                    let print_promise = printCharacter(message, message.author.id, 'all', 'edit');
                     print_promise.then(function() {
                         message.reply("This is just a starting character sheet. You need to add your mantle's stunts, stress and conditions. " +
                             "You also get to add one additional stunt of your choice, and you purchase up to 2 more with your refresh." +
                             "You can also create up to 2 more aspects of your choice." +
-                            "\nAll of the above can be done through the `!update-stat` command.")
+                            "\nUse the !help command to find out how to update your character.")
                     });
 
 

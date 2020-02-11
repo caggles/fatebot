@@ -16,11 +16,6 @@ module.exports = class RemoveStuntCommand extends Command {
             examples: ['`!remove-stunt`'],
             args: [
                 {
-                    key: 'nickname',
-                    prompt: 'What is your character\'s nickname?',
-                    type: 'string'
-                },
-                {
                     key: 'stunt',
                     prompt: 'What is the name of the stunt? You will need to enter the correct stunt name exactly as it appears on your character sheet.',
                     type: 'string'
@@ -35,10 +30,9 @@ module.exports = class RemoveStuntCommand extends Command {
         });
     }
 
-    async run(message, {nickname, stunt, refresh}) {
+    async run(message, {stunt, refresh}) {
         try {
 
-            nickname = nickname.toString().toLowerCase().trim()
             stunt = stunt.toString().toLowerCase().trim()
 
 
@@ -49,7 +43,7 @@ module.exports = class RemoveStuntCommand extends Command {
                 const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
-                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
+                let query = {userid: message.author.id, guildid: message.guild.id};
                 let update = { $pull: { 'stunts': stunt }, $inc: {'refresh': refresh} };
 
                 //update the document with the new stunt
@@ -57,7 +51,7 @@ module.exports = class RemoveStuntCommand extends Command {
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stunts')
+                    let print_promise = printCharacter(message, message.author.id,'stunts', 'edit')
 
                 })
                 .catch(function (err) {

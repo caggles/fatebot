@@ -4,7 +4,7 @@ const checkPriv = require('./priv-check');
 require('dotenv').config();
 
 
-module.exports = function printCharacter(message, userid, nickname, scope) {
+module.exports = function printCharacter(message, userid, scope, reason) {
     return new Promise((resolve, reject) => {
         try {
 
@@ -26,7 +26,7 @@ module.exports = function printCharacter(message, userid, nickname, scope) {
                     userid = userid.replace('<','').replace('>','').replace('@', '').replace('!','');
 
                     //query for the character by nickname and user (this is unique)
-                    let query = {'nickname': nickname.toLowerCase(), 'userid': userid, 'guildid': message.guild.id};
+                    let query = {'userid': userid, 'guildid': message.guild.id};
                     let get_promise = collection.findOne(query);
                     get_promise.then(function (character) {
 
@@ -35,7 +35,7 @@ module.exports = function printCharacter(message, userid, nickname, scope) {
                             reject(err)
                         } else {
 
-                            let sheet = "__**" + character.character_name.capitalize() + "**__";
+                            let sheet = "__**" + character.character_name.capitalize() + "**__\n" + character.nickname.capitalize();
                             message.say(sheet)
 
                             if (scope == "base" || scope == "all") {
@@ -85,6 +85,10 @@ module.exports = function printCharacter(message, userid, nickname, scope) {
                                     sheet += condition + " : " + character.conditions[condition].marked + "/" + character.conditions[condition].total + '\n';
                                 }
                                 message.say(sheet)
+                            }
+
+                            if (reason == 'edit') {
+                                message.say('@GM, ' + character.character_name.capitalize() + ' has been edited. Please review.')
                             }
 
                             resolve(null);

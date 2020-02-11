@@ -16,11 +16,6 @@ module.exports = class UpdateRefreshCommand extends Command {
             examples: ['`!update-mantle`'],
             args: [
                 {
-                    key: 'nickname',
-                    prompt: 'What is your character\'s nickname?',
-                    type: 'string'
-                },
-                {
                     key: 'refresh',
                     prompt: 'What is your new refresh value? This is not an amount to add or remove from your current refresh, this is the new refresh total.',
                     type: 'integer'
@@ -29,10 +24,9 @@ module.exports = class UpdateRefreshCommand extends Command {
         });
     }
 
-    async run(message, {nickname, refresh}) {
+    async run(message, {refresh}) {
         try {
 
-            nickname = nickname.toString().toLowerCase().trim();
             refresh = parseInt(refresh);
 
             //connect to the "character" collection
@@ -42,7 +36,7 @@ module.exports = class UpdateRefreshCommand extends Command {
                 const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
-                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id}
+                let query = {userid: message.author.id, guildid: message.guild.id}
                 let update = { $set: {'refresh': refresh} }
 
                 //update the document with the new stunt
@@ -50,7 +44,7 @@ module.exports = class UpdateRefreshCommand extends Command {
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'base')
+                    let print_promise = printCharacter(message, message.author.id, 'base', 'edit')
 
                 })
                 .catch(function (err) {

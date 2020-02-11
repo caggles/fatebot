@@ -13,13 +13,8 @@ module.exports = class StressPlusCommand extends Command {
             group: 'character',
             memberName: 'stress+',
             description: 'add stress to your character',
-            examples: ['`!stress+ nickname type number`'],
+            examples: ['`!stress+ type number`'],
             args: [
-                {
-                    key: 'nickname',
-                    prompt: 'What is your character\'s nickname?',
-                    type: 'string'
-                },
                 {
                     key: 'type',
                     prompt: 'What type of stress are you marking? (This is probably base unless you\'re doing something specific)',
@@ -34,10 +29,9 @@ module.exports = class StressPlusCommand extends Command {
         });
     }
 
-    async run(message, {nickname, type, stress}) {
+    async run(message, {type, stress}) {
         try {
 
-            nickname = nickname.toString().toLowerCase().trim();
             type = type.toString().toLowerCase().trim();
             stress = parseInt(stress);
 
@@ -47,8 +41,8 @@ module.exports = class StressPlusCommand extends Command {
             client.connect(err => {
                 const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
-                //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
-                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
+                //query against the given the user's ID and guild ID, to make sure nobody can edit another person's character.
+                let query = {userid: message.author.id, guildid: message.guild.id};
 
                 //update the document with the new stunt
                 let find_promise = collection.findOne(query);
@@ -70,13 +64,13 @@ module.exports = class StressPlusCommand extends Command {
                     let base_left = character["stress"]["base"]["total"] - character["stress"]["base"]["marked"];
 
                     if (stress > base_left) {
-                        let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stress')
+                        let print_promise = printCharacter(message, message.author.id,'stress', 'view')
                         throw "You don't have enough stress boxes left to take this damage. Mitigate some with a condition and try again."
                     } else {
 
                         base_stress += stress;
 
-                        let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
+                        let query = {userid: message.author.id, guildid: message.guild.id};
                         let update = { $set: {"stress.base.marked": base_stress }};
                         if (type != "base" && character["stress"][type] != undefined) {
                             let type_field = "stress." + type + ".marked";
@@ -86,7 +80,7 @@ module.exports = class StressPlusCommand extends Command {
                         let update_promise = collection.findOneAndUpdate(query, update);
                         update_promise.then(function (character) {
 
-                            let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stress')
+                            let print_promise = printCharacter(message, message.author.id, 'stress', 'view')
 
                         });
 

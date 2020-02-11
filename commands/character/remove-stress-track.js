@@ -16,11 +16,6 @@ module.exports = class RemoveStressTrackCommand extends Command {
             examples: ['`!remove-stress-track nickname track-name`'],
             args: [
                 {
-                    key: 'nickname',
-                    prompt: 'What is your character\'s nickname?',
-                    type: 'string'
-                },
-                {
                     key: 'trackname',
                     prompt: 'What is the name of the stress track?',
                     type: 'string'
@@ -29,10 +24,9 @@ module.exports = class RemoveStressTrackCommand extends Command {
         });
     }
 
-    async run(message, {nickname, trackname}) {
+    async run(message, {trackname}) {
         try {
 
-            nickname = nickname.toString().toLowerCase().trim();
             trackname = trackname.toString().toLowerCase().trim();
 
             //connect to the "character" collection
@@ -42,7 +36,7 @@ module.exports = class RemoveStressTrackCommand extends Command {
                 const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
-                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
+                let query = {userid: message.author.id, guildid: message.guild.id};
                 let field = 'stress.' + trackname;
                 let update = { $unset: { [field] : {}} };
 
@@ -51,7 +45,7 @@ module.exports = class RemoveStressTrackCommand extends Command {
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'stress')
+                    let print_promise = printCharacter(message, message.author.id, 'stress', 'edit')
 
                 })
                 .catch(function (err) {

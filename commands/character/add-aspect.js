@@ -16,11 +16,6 @@ module.exports = class AddAspectCommand extends Command {
             examples: ['`!add-aspect`'],
             args: [
                 {
-                    key: 'nickname',
-                    prompt: 'What is your character\'s nickname?',
-                    type: 'string'
-                },
-                {
                     key: 'aspect',
                     prompt: 'What is the name of the aspect?',
                     type: 'string'
@@ -35,11 +30,10 @@ module.exports = class AddAspectCommand extends Command {
         });
     }
 
-    async run(message, {nickname, aspect, type}) {
+    async run(message, {aspect, type}) {
         try {
 
-            nickname = nickname.toString().toLowerCase().trim()
-            aspect = aspect.toString().toLowerCase().trim()
+            aspect = aspect.toString().toLowerCase().trim();
 
             if (type == 'high concept' || type == 'high' || type == 'hc') {
                 type = 'high_concept'
@@ -54,8 +48,8 @@ module.exports = class AddAspectCommand extends Command {
             client.connect(err => {
                 const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
-                //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
-                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id}
+                //query against the user's id and guild id, to make sure nobody can edit another person's character.
+                let query = {userid: message.author.id, guildid: message.guild.id}
                 let update = ''
 
                 if (type == 'other') {
@@ -73,7 +67,7 @@ module.exports = class AddAspectCommand extends Command {
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'aspects')
+                    let print_promise = printCharacter(message, message.author.id, 'aspects', 'edit')
 
                 })
                 .catch(function (err) {

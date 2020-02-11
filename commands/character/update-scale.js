@@ -16,11 +16,6 @@ module.exports = class UpdateScaleCommand extends Command {
             examples: ['`!update-scale nickname scale`'],
             args: [
                 {
-                    key: 'nickname',
-                    prompt: 'What is your character\'s nickname?',
-                    type: 'string'
-                },
-                {
                     key: 'scale',
                     prompt: 'What is your character\'s new scale?',
                     type: 'string'
@@ -29,12 +24,10 @@ module.exports = class UpdateScaleCommand extends Command {
         });
     }
 
-    async run(message, {nickname, scale}) {
+    async run(message, {scale}) {
         try {
 
-            nickname = nickname.toString().toLowerCase().trim();
             scale = scale.toString().toLowerCase().trim();
-
 
             //connect to the "character" collection
             const uri = process.env.MONGO_URI;
@@ -43,7 +36,7 @@ module.exports = class UpdateScaleCommand extends Command {
                 const collection = client.db(process.env.MONGO_NAME).collection("characters");
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
-                let query = {nickname: nickname.toLowerCase(), userid: message.author.id, guildid: message.guild.id};
+                let query = {userid: message.author.id, guildid: message.guild.id};
                 let update = { $set: {'scale': scale} };
 
                 //update the document with the new stunt
@@ -51,7 +44,7 @@ module.exports = class UpdateScaleCommand extends Command {
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, character["value"]["nickname"], 'base')
+                    let print_promise = printCharacter(message, message.author.id, 'base', 'edit')
 
                 })
                 .catch(function (err) {
