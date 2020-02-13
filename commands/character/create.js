@@ -121,6 +121,7 @@ module.exports = class CharacterCreateCommand extends Command {
                         'guildid': message.guild.id,
                         'character_name': character_name,
                         'nickname': nickname,
+                        'imgurl': '',
                         'mantle': mantle,
                         'high_concept': high_concept,
                         'trouble_aspect': trouble_aspect,

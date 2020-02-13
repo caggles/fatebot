@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const printCharacter = require('../../functions/print-character')
+const printPretty = require('../../functions/print-pretty')
 
 module.exports = class PrintCommand extends Command {
     constructor(client) {
@@ -27,10 +28,10 @@ module.exports = class PrintCommand extends Command {
                 userid = userid.replace('<','').replace('>','').replace('@', '').replace('!','')
             }
 
-            printCharacter(message, userid, 'all', 'view');
+            printPretty(message, userid, 'all', 'view');
 
         } catch (err) {
-            message.reply(err.message)
+            message.reply('Error: ' + err.message)
         }
 
 
