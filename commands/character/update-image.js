@@ -45,7 +45,7 @@ module.exports = class UpdateImageCommand extends Command {
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, 'base', 'edit')
+                    let print_promise = printCharacter(message, message.author.id, 'base', 'view')
 
                 })
                 .catch(function (err) {
