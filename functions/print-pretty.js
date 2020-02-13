@@ -118,10 +118,10 @@ function getPage(i) {
         case 4:
             response
                 .setTitle(global_character.character_name.capitalize() + ': Image')
-            if (character.imgurl != ''){
+            try {
                 response
                     .setImage(character.imgurl);
-            } else {
+            } catch {
                 response
                     .setDescription('You don\'t have an image for your character.')
             }
