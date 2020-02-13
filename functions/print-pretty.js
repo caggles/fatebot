@@ -65,10 +65,22 @@ function getPage(name) {
                 .addField('Approaches', sheet);
             break;
         case 'aspects':
-            sheet = "[" + character.high_concept.name.capitalize() + "] (HC)\n" +
-                "[" + character.trouble_aspect.name.capitalize() + "] (T)\n";
+            sheet = "**[" + character.high_concept.name.capitalize() + "] (HC)**\n";
+            if (character.high_concept.desc != '') {
+                sheet += character.high_concept.desc + '\n';
+            }
+            sheet += '\n'
+            sheet += "**[" + character.trouble_aspect.name.capitalize() + "] (T)**\n";
+            if (character.trouble_aspect.desc != '') {
+                sheet += character.trouble_aspect.desc + '\n';
+            }
+            sheet += '\n'
             for (let aspect in character.aspects) {
-                sheet += "[" + character.aspects[aspect].name.capitalize() + "]\n"
+                sheet += "**[" + character.aspects[aspect].name.capitalize() + "]**\n"
+                if (character.aspects[aspect].desc != '') {
+                    sheet += character.aspects[aspect].desc + '\n';
+                }
+                sheet += '\n'
             }
             response
                 .setTitle(global_character.character_name.capitalize() + ': Aspects')
@@ -77,6 +89,10 @@ function getPage(name) {
         case 'stunts':
             for (let stunt in character.stunts) {
                 sheet += '**' + character.stunts[stunt].name.capitalize() + "**\n"
+                if (character.stunts[stunt].desc != "") {
+                    sheet += character.stunts[stunt].desc.capitalize() + "\n"
+                }
+                sheet += '\n';
             }
             response
                 .setTitle(global_character.character_name.capitalize() + ': Stunts')

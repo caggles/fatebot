@@ -22,6 +22,11 @@ module.exports = class AddStuntCommand extends Command {
                     type: 'string'
                 },
                 {
+                    key: 'desc',
+                    prompt: 'What is the stunt\'s description? Enter "none" if you don\'t want to include a description.',
+                    type: 'string'
+                },
+                {
                     key: 'refresh',
                     prompt: 'Enter the number of refresh to be spent on this stunt: 0 if a core stunt or made a creation, or else 1 in all other cases.',
                     type: "integer",
@@ -31,10 +36,14 @@ module.exports = class AddStuntCommand extends Command {
         });
     }
 
-    async run(message, {stunt, refresh}) {
+    async run(message, {stunt, desc, refresh}) {
         try {
 
             stunt = stunt.toString().toLowerCase().trim()
+            desc = desc.toString().toLowerCase().trim()
+            if (desc == 'none') {
+                desc = '';
+            }
 
             //connect to the "character" collection
             const uri = process.env.MONGO_URI;
@@ -45,7 +54,7 @@ module.exports = class AddStuntCommand extends Command {
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {userid: message.author.id, guildid: message.guild.id};
                 let quantity = 0 - refresh
-                let update = { $addToSet: { 'stunts': {name: stunt, desc: ''} }, $inc: {'refresh': quantity} };
+                let update = { $addToSet: { 'stunts': {name: stunt, desc: desc} }, $inc: {'refresh': quantity} };
 
                 //update the document with the new stunt
                 let update_promise = collection.findOneAndUpdate(query, update);

@@ -22,6 +22,11 @@ module.exports = class AddAspectCommand extends Command {
                     type: 'string'
                 },
                 {
+                    key: 'desc',
+                    prompt: 'What is the description of the aspect? Enter "none" if you don\'t want to include a description.',
+                    type: 'string'
+                },
+                {
                     key: 'type',
                     prompt: 'What type of aspect are you updating?\nOptions: high, trouble, other',
                     type: 'string',
@@ -31,10 +36,14 @@ module.exports = class AddAspectCommand extends Command {
         });
     }
 
-    async run(message, {aspect, type}) {
+    async run(message, {aspect, desc, type}) {
         try {
 
             aspect = aspect.toString().toLowerCase().trim();
+            desc = desc.toString().toLowerCase().trim()
+            if (desc == 'none') {
+                desc = '';
+            }
 
             if (type == 'high concept' || type == 'high' || type == 'hc') {
                 type = 'high_concept'
@@ -54,11 +63,11 @@ module.exports = class AddAspectCommand extends Command {
                 let update = ''
 
                 if (type == 'other') {
-                    update = { $addToSet: { 'aspects': {name: aspect, desc: ''} } }
+                    update = { $addToSet: { 'aspects': {name: aspect, desc: desc} } }
                 } else if (type == 'high_concept') {
-                    update = { $set: {'high_concept': {name: aspect, desc: ''}} }
+                    update = { $set: {'high_concept': {name: aspect, desc: desc}} }
                 } else if (type == 'trouble_aspect') {
-                    update = { $set: {'trouble_aspect': {name: aspect, desc: ''}} }
+                    update = { $set: {'trouble_aspect': {name: aspect, desc: desc}} }
                 } else {
                     throw 'That isn\'t a valid aspect type';
                 }
