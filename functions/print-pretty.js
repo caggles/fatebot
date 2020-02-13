@@ -160,7 +160,7 @@ function onCollect(emoji, message, i, getPage) {
     }
 }
 
-const time = 360000;
+const time = 60*60000;
 
 function createCollectorMessage(message, getPage) {
   let i = 0;
@@ -241,7 +241,7 @@ module.exports = function printPretty(message, userid, scope, reason) {
                     });
                 });
             });
-        }catch (err) {
+        } catch (err) {
             message.reply("Error: " + err);
             reject(err);
         }
