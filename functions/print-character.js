@@ -66,10 +66,7 @@ module.exports = function printCharacter(message, userid, scope, reason) {
                                 approachlist[character.approaches.haste] += 'Haste, ';
                                 approachlist[character.approaches.intellect] += 'Intellect, ';
 
-                                console.log(approachlist)
-
                                 sheet = " ឵឵\n**Approaches**\n"
-
 
                                 let print = false
                                 for (let i = 5; i >= 0; i--) {
@@ -107,7 +104,6 @@ module.exports = function printCharacter(message, userid, scope, reason) {
                                     }
                                     sheet += '\n'
                                 }
-                                //sheet += stress + " : " + character.stress[stress].marked + "/" + character.stress[stress].total + '\n';
 
                                 sheet += " ឵឵\n**Conditions**\n";
                                 for (let condition in character.conditions) {
@@ -128,7 +124,6 @@ module.exports = function printCharacter(message, userid, scope, reason) {
 
                             if (reason == 'edit') {
                                 let gmrole = message.guild.roles.find(role => role.name === "GM");
-                                console.log(gmrole)
                                 message.say( '<@&' + gmrole.id + '>, ' + character.character_name.capitalize() + ' has been edited. Please review.')
                             }
 
