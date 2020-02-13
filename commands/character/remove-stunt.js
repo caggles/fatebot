@@ -45,7 +45,7 @@ module.exports = class RemoveStuntCommand extends Command {
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {userid: message.author.id, guildid: message.guild.id};
-                let update = { $pull: { 'stunts': stunt }, $inc: {'refresh': refresh} };
+                let update = { $pull: { 'stunts': {name: stunt, desc: '' } }, $inc: {'refresh': refresh} };
 
                 //update the document with the new stunt
                 let update_promise = collection.findOneAndUpdate(query, update);

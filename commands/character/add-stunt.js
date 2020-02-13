@@ -45,7 +45,7 @@ module.exports = class AddStuntCommand extends Command {
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {userid: message.author.id, guildid: message.guild.id};
                 let quantity = 0 - refresh
-                let update = { $addToSet: { 'stunts': stunt }, $inc: {'refresh': quantity} };
+                let update = { $addToSet: { 'stunts': {name: stunt, desc: ''} }, $inc: {'refresh': quantity} };
 
                 //update the document with the new stunt
                 let update_promise = collection.findOneAndUpdate(query, update);

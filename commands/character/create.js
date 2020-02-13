@@ -126,7 +126,7 @@ module.exports = class CharacterCreateCommand extends Command {
                         'mantle': mantle,
                         'high_concept': high_concept,
                         'trouble_aspect': trouble_aspect,
-                        'aspects': [aspect],
+                        'aspects': [{name: aspect, desc: ''}],
                         approaches: {
                             'flair': 0,
                             'focus': 0,

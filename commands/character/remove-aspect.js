@@ -39,7 +39,7 @@ module.exports = class RemoveAspectCommand extends Command {
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {userid: message.author.id, guildid: message.guild.id}
-                let update = { $pull: { 'aspects': aspect } }
+                let update = { $pull: { 'aspects': {name: aspect, desc: '' } } }
 
                 //update the document with the new stunt
                 let update_promise = collection.findOneAndUpdate(query, update);

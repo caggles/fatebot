@@ -54,11 +54,11 @@ module.exports = class AddAspectCommand extends Command {
                 let update = ''
 
                 if (type == 'other') {
-                    update = { $addToSet: { 'aspects': aspect } }
+                    update = { $addToSet: { 'aspects': {name: aspect, desc: ''} } }
                 } else if (type == 'high_concept') {
-                    update = { $set: {'high_concept': aspect} }
+                    update = { $set: {'high_concept': {name: aspect, desc: ''}} }
                 } else if (type == 'trouble_aspect') {
-                    update = { $set: {'trouble_aspect': aspect} }
+                    update = { $set: {'trouble_aspect': {name: aspect, desc: ''}} }
                 } else {
                     throw 'That isn\'t a valid aspect type';
                 }
