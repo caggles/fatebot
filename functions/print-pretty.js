@@ -90,7 +90,7 @@ function getPage(name) {
             for (let stunt in character.stunts) {
                 sheet += '**' + character.stunts[stunt].name.capitalize() + "**\n"
                 if (character.stunts[stunt].desc != "") {
-                    sheet += character.stunts[stunt].desc.capitalize() + "\n"
+                    sheet += character.stunts[stunt].desc + "\n"
                 }
                 sheet += '\n';
             }
