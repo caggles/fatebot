@@ -63,12 +63,16 @@ function getPage(name) {
             }
             response
                 .addField('Approaches', sheet);
-            sheet = '';
-            for (let stunt in character.stunts) {
-                sheet += character.stunts[stunt].name.capitalize() + "\n"
+
+            if (character.stunts.length > 0) {
+                sheet = '';
+                for (let stunt in character.stunts) {
+                    sheet += character.stunts[stunt].name.capitalize() + "\n"
+                }
+                response
+                    .addField('Stunts', sheet);
             }
-            response
-                .addField('Stunts', sheet);
+
             break;
         case 'aspects':
             sheet = "**[" + character.high_concept.name.capitalize() + "] (HC)**\n";
