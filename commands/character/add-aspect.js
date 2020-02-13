@@ -41,7 +41,7 @@ module.exports = class AddAspectCommand extends Command {
 
             aspect = aspect.toString().toLowerCase().trim();
             desc = desc.toString().trim()
-            if (desc == 'none') {
+            if (desc.toLowerCase() == 'none') {
                 desc = '';
             }
 
