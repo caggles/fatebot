@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const { Command } = require('discord.js-commando');
 const MongoClient = require('mongodb').MongoClient;
 const printCharacter = require('../../functions/print-character');
+const printPretty = require('../../functions/print-pretty');
 const stats = require('../../utils/const_character');
 require('dotenv').config();
 
@@ -177,7 +178,7 @@ module.exports = class CharacterCreateCommand extends Command {
                 create_promise.then(function (character) {
 
                     //print the resulting character sheet
-                    let print_promise = printCharacter(message, message.author.id, 'all', 'edit');
+                    let print_promise = printPretty(message, message.author.id, 'all', 'edit');
                     print_promise.then(function() {
                         message.reply("This is just a starting character sheet. You need to add your mantle's stunts, stress and conditions. " +
                             "You also get to add one additional stunt of your choice, and you purchase up to 2 more with your refresh." +

@@ -22,17 +22,21 @@ const conditions = () => new Discord.RichEmbed()
 const image = () => new Discord.RichEmbed()
       .setColor('#AAA');
 
-const list = [home, aspects, stunts, conditions, image];
+const map = {'home': home, 'aspects': aspects, 'stunts': stunts, 'conditions': conditions, 'image': image};
 
-function getPage(i) {
+function getMap(name) {
+  return map[name]();
+}
+
+function getPage(name) {
 
     let sheet = '';
     let character = global_character;
-    let response = list[i]()
+    let response = getMap(name)
         .setTimestamp();
 
-    switch(i) {
-        case 0:
+    switch(name) {
+        case 'home':
             sheet = "Mantle: " + character.mantle.capitalize() + "\n" +
                 "Scale: " + character.scale.capitalize() + "\n" +
                 "Refresh: " + character.refresh + "\n" +
@@ -60,7 +64,7 @@ function getPage(i) {
             response
                 .addField('Approaches', sheet);
             break;
-        case 1:
+        case 'aspects':
             sheet = "[" + character.high_concept.capitalize() + "] (HC)\n" +
                 "[" + character.trouble_aspect.capitalize() + "] (T)\n";
             for (let aspect in character.aspects) {
@@ -70,7 +74,7 @@ function getPage(i) {
                 .setTitle(global_character.character_name.capitalize() + ': Aspects')
                 .setDescription(sheet);
             break;
-        case 2:
+        case 'stunts':
             for (let stunt in character.stunts) {
                 sheet += character.stunts[stunt].capitalize() + "\n"
             }
@@ -78,7 +82,7 @@ function getPage(i) {
                 .setTitle(global_character.character_name.capitalize() + ': Stunts')
                 .setDescription(sheet);
             break;
-        case 3:
+        case 'conditions':
             response
                 .setTitle(global_character.character_name.capitalize() + ': Stress and Conditions')
             sheet = ''
@@ -115,7 +119,7 @@ function getPage(i) {
             response
                 .addField('Conditions', sheet);
             break;
-        case 4:
+        case 'image':
             response
                 .setTitle(global_character.character_name.capitalize() + ': Image')
             try {
@@ -125,7 +129,6 @@ function getPage(i) {
                 response
                     .setDescription('You don\'t have an image for your character.')
             }
-
             break;
     }
     return response
@@ -140,19 +143,19 @@ const emojiList = ['🏠', '🇦', '🇸', '🇨', '📷'];
 function onCollect(emoji, message, i, getPage) {
     switch (emoji.name){
         case '🏠':
-            message.edit(getPage(0));
+            message.edit(getPage('home'));
             break;
         case '🇦':
-            message.edit(getPage(1));
+            message.edit(getPage('aspects'));
             break;
         case '🇸':
-            message.edit(getPage(2));
+            message.edit(getPage('stunts'));
             break;
         case '🇨':
-            message.edit(getPage(3));
+            message.edit(getPage('conditions'));
             break;
         case '📷':
-            message.edit(getPage(4));
+            message.edit(getPage('image'));
             break;
     }
 }
@@ -168,8 +171,8 @@ function createCollectorMessage(message, getPage) {
   collector.on('end', collected => message.clearReactions());
 }
 
-function sendSheet(message){
-    message.say(getPage(0))
+function sendSheet(message, page){
+    message.say(getPage(page))
         .then(msg => msg.react(emojiList[0]))
         .then(msgReaction => msgReaction.message.react(emojiList[1]))
         .then(msgReaction => msgReaction.message.react(emojiList[2]))
@@ -208,7 +211,31 @@ module.exports = function printPretty(message, userid, scope, reason) {
                             reject(err)
                         } else {
                             global_character = character;
-                            sendSheet(message);
+
+                            if ((scope == "base" || scope == "approaches") && reason == 'view') {
+                                sendSheet(message, 'home');
+                            } else if (scope == "aspects" && reason == 'view') {
+                                sendSheet(message, 'aspects');
+                            } else if (scope == "stunts" && reason == 'view') {
+                                sendSheet(message, 'stunts');
+                            } else if ((scope == "condition" || scope == "stress") && reason == 'view') {
+                                sendSheet(message, 'conditions');
+                            } else if (scope == "base" || scope == "approaches") {
+                                message.say(getPage('home'));
+                            } else if (scope == "aspects") {
+                                message.say(getPage('aspects'));
+                            } else if (scope == "stunts") {
+                                message.say(getPage('stunts'));
+                            } else if (scope == "condition" || scope == "stress") {
+                                message.say(getPage('conditions'));
+                            } else {
+                                sendSheet(message, 'home');
+                            }
+                            if (reason == 'edit') {
+                                let gmrole = message.guild.roles.find(role => role.name === "GM");
+                                message.say( '<@&' + gmrole.id + '>, ' + character.character_name.capitalize() + ' has been edited. Please review.')
+                            }
+
                         }
 
                     });

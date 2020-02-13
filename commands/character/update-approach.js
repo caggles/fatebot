@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const { Command } = require('discord.js-commando')
 const MongoClient = require('mongodb').MongoClient
 const printCharacter = require('../../functions/print-character')
+const printPretty = require('../../functions/print-pretty')
 require('../../functions/capitalize')
 const stats = require('../../utils/const_character');
 require('dotenv').config()
@@ -54,7 +55,7 @@ module.exports = class UpdateApproachCommand extends Command {
                 update_promise.then(function (character) {
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, 'approaches', 'edit')
+                    let print_promise = printPretty(message, message.author.id, 'approaches', 'edit')
 
                 })
                 .catch(function (err) {

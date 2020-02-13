@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const { Command } = require('discord.js-commando')
 const MongoClient = require('mongodb').MongoClient
 const printCharacter = require('../../functions/print-character')
+const printPretty = require('../../functions/print-pretty')
 require('../../functions/capitalize')
 const stats = require('../../utils/const_character');
 require('dotenv').config()
@@ -52,7 +53,7 @@ module.exports = class ConditionPlusCommand extends Command {
                     } else {
                         if (character["conditions"][type]["marked"] + boxes > character["conditions"][type]["total"]) {
 
-                        let print_promise = printCharacter(message, message.author.id,'condition', 'view')
+                        let print_promise = printPretty(message, message.author.id,'condition', 'view')
                         throw "You don't have enough boxes in this condition to add that many ticks."
 
                     } else {

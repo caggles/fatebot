@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const { Command } = require('discord.js-commando')
 const MongoClient = require('mongodb').MongoClient
 const printCharacter = require('../../functions/print-character')
+const printPretty = require('../../functions/print-pretty')
 require('../../functions/capitalize')
 const stats = require('../../utils/const_character');
 require('dotenv').config()
@@ -14,22 +15,10 @@ module.exports = class FatePlusCommand extends Command {
             memberName: 'fate+',
             description: 'add a fate point to your character',
             examples: ['`!fate+`'],
-            args: [
-                {
-                    key: 'type',
-                    prompt: 'What type of condition are you marking?',
-                    type: 'string'
-                },
-                {
-                    key: 'boxes',
-                    prompt: 'How many boxes are you marking?',
-                    type: 'integer'
-                }
-            ]
         });
     }
 
-    async run(message, {type, boxes}) {
+    async run(message) {
         try {
 
             //connect to the "character" collection
@@ -40,7 +29,7 @@ module.exports = class FatePlusCommand extends Command {
 
                 //query against the given nickname and the user's ID, to make sure nobody can edit another person's character.
                 let query = {userid: message.author.id, guildid: message.guild.id};
-                let update = { $set: {'fate_points': 1} };
+                let update = { $inc: {'fate_points': 1} };
 
                 //update the document with the new stunt
                 let update_promise = collection.findOneAndUpdate(query, update);
@@ -51,7 +40,7 @@ module.exports = class FatePlusCommand extends Command {
                     }
 
                     //print the new character sheet with update info.
-                    let print_promise = printCharacter(message, message.author.id, 'base', 'view')
+                    let print_promise = printPretty(message, message.author.id, 'base', 'view')
 
                 })
                 .catch(function (err) {
