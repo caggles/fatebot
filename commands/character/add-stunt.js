@@ -41,7 +41,7 @@ module.exports = class AddStuntCommand extends Command {
 
             stunt = stunt.toString().toLowerCase().trim()
             desc = desc.toString().trim()
-            if (desc == 'none') {
+            if (desc.toLowerCase() == 'none') {
                 desc = '';
             }
 
