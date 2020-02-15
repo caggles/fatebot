@@ -100,6 +100,9 @@ function getPage(name) {
             for (let stunt in character.stunts) {
                 sheet += '**' + character.stunts[stunt].name.capitalize() + "**\n"
                 if (character.stunts[stunt].desc != "") {
+                    if (character.stunts[stunt].desc.length > 250) {
+                        character.stunts[stunt].desc = character.stunts[stunt].desc.substr(0, 247) + '...';
+                    }
                     sheet += character.stunts[stunt].desc + "\n"
                 }
                 sheet += '\n';
