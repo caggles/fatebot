@@ -15,9 +15,11 @@ module.exports = class PrintCommand extends Command {
     }
 
     run(message) {
-        let msglist = message.content.split(" ")
-        let nickname = ''
-        let userid = ''
+        let msglist = message.content.split(" ");
+        let nickname = '';
+        let userid = '';
+
+        msglist = msglist.filter(Boolean);
 
         try {
 
