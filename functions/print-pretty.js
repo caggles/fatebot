@@ -77,18 +77,24 @@ function getPage(name) {
         case 'aspects':
             sheet = "**[" + character.high_concept.name.capitalize() + "] (HC)**\n";
             if (character.high_concept.desc != '') {
-                sheet += character.high_concept.desc + '\n';
+                if (character.high_concept.desc.length > 250) {
+                    sheet += character.high_concept.desc + '\n';
+                }
             }
             sheet += '\n'
             sheet += "**[" + character.trouble_aspect.name.capitalize() + "] (T)**\n";
             if (character.trouble_aspect.desc != '') {
-                sheet += character.trouble_aspect.desc + '\n';
+                if (character.trouble_aspect.desc.length > 250) {
+                    sheet += character.trouble_aspect.desc + '\n';
+                }
             }
             sheet += '\n'
             for (let aspect in character.aspects) {
                 sheet += "**[" + character.aspects[aspect].name.capitalize() + "]**\n"
                 if (character.aspects[aspect].desc != '') {
-                    sheet += character.aspects[aspect].desc + '\n';
+                    if (character.aspects[aspect].desc.length > 250) {
+                        sheet += character.aspects[aspect].desc + '\n';
+                    }
                 }
                 sheet += '\n'
             }
