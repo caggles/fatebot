@@ -198,7 +198,7 @@ function onCollect(emoji, message, i, getPage) {
     }
 }
 
-const time = 2*60000;
+const time = 60*60000;
 
 function createCollectorMessage(message, getPage) {
   let i = 0;
